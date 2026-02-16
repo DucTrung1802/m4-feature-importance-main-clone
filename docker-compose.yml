@@ -1,0 +1,27 @@
+version: "3.3"
+services:
+  notebook_work:
+    build: ./environment
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+    ports:
+      - 60022:8888
+    command: start-notebook.sh --NotebookApp.password="" --NotebookApp.token=''
+    volumes:
+      - .:/home/jovyan/work
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '40.0'
+
+  notebook:
+    build: ./environment
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+    ports:
+      - 60023:8888
+    command: start-notebook.sh --NotebookApp.password="" --NotebookApp.token=''
+    volumes:
+      - .:/home/jovyan/work
+    restart: always

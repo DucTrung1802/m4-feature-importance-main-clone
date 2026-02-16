@@ -1,0 +1,18 @@
+#snakemake -j20 --keep-going --until all --snakefile SnakefileFeatures
+
+from feature_extractors import * 
+from models import *
+
+rule compute_errors:
+    output: "prediction_errors/mape.csv"
+    shell: "python compute_errors.py --input_data 'data/test/*.csv' --input_predictions 'data/predictions/*.csv' --output {output}"
+
+rule feature_extraction_all:
+    input: expand("features/{method}.csv", method=FeatureExtractor.get_registered_models().keys())
+
+rule feature_extraction:
+    output: "features/{method}.csv"
+    shell: "python feature_extraction.py  --method {wildcards.method} --input_folder 'data/train/*.csv' --output {output}"
+    
+rule all:
+    input: rules.compute_errors.output + rules.feature_extraction_all.input
